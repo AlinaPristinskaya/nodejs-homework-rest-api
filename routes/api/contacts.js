@@ -56,9 +56,7 @@ router.delete('/:contactId', async (req, res, next) => {
   }
 })
 
-router.patch('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+
 
 router.put('/:contactId',validateContact, async (req, res, next) => {
   try{
