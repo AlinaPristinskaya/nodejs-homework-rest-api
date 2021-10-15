@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const Contacts= require('../../model')
-const {validateContact}= require('./validation')
+const Contacts= require('../../repository/index')
+const {validateContact, validateId}= require('./validation')
 
 router.get('/', async (req, res, next) => {
   try{
@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
   
 })
 
-router.get('/:contactId',  async (req, res, next) => {
+router.get('/:contactId',validateId,  async (req, res, next) => {
   try{
     const contact= await Contacts.getContactById(req.params.contactId)
     if(contact){
@@ -36,14 +36,15 @@ router.post('/',validateContact, async (req, res, next) => {
     if (!contact.name||!contact.email||!contact.phone){
       return res.status(400).json({status:'error', code:400,data:{contact}})
     }
-   return res.status(200).json({ status: 'success', code: 201, data: {contact} })
+    return res.status(200).json({ status: 'success', code: 201, data: {contact} })
     
   }catch(error){
     next(error)
   }
 })
 
-router.delete('/:contactId', async (req, res, next) => {
+
+router.delete('/:contactId', validateId, async (req, res, next) => {
   try{
     const contact=await Contacts.removeContact(req.params.contactId)
     if(contact){
@@ -77,5 +78,23 @@ router.put('/:contactId',validateContact, async (req, res, next) => {
     next(error)
   }
 })
+
+router.patch("/:contactId/favorite", async (req, res, next) => {
+  try {
+    console.log(req.method);
+    const contact = await Contacts.updateStatusContact(req.params.contactId, req.body.favorite);
+    if (contact) {
+      return res
+        .status(200)
+        .json({ status: "succes", code: 200, data: { contact } });
+    }
+    return res
+      .status(404)
+      .json({ status: "error", code: 404, message: "Not Found" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 module.exports = router
