@@ -1,4 +1,5 @@
 const Joi=require('joi')
+Joi.objectid=require('joi-objectid')(Joi)
 
 const patterns={
     name:/[a-zA-Zа-яА-Я]*$/,
@@ -8,10 +9,13 @@ const patterns={
 const schemaContact=Joi.object({
     "name": Joi.string().pattern(patterns.name).min(1).max(30).required(),
     "email": Joi.string().email().required(),
-    "phone": Joi.string().pattern(patterns.phone).required()
+    "phone": Joi.string().pattern(patterns.phone).required(),
+    "favorite": Joi.boolean().optional(),
 })
 
-
+const schemaId=Joi.object({
+    id:Joi.objectid()
+})
 
 const validate= async(schema,obj,res,next)=>{
 try {
@@ -27,3 +31,6 @@ catch (err) {
      return await validate(schemaContact,req.body, res,next)
  }
 
+ module.exports.validateId=async(req,res,next)=>{
+    return await validate(schemaId,req.body, res,next)
+}
