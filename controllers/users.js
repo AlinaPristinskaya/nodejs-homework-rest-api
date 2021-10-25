@@ -68,5 +68,21 @@ const logout=async(req,res,next)=>{
   await Users.updateToken(id,null)
   return  res.status(HttpCode.NO_CONTENT).json({test:"test"})
 }
+const current = async (req, res, next) => {
+  const userId = req.user._id;
+  const user = await Users.findById(userId);
+  try{
+    if (user) {
+      return res.status(HttpCode.OK).json({
+        status: "success",
+        code: HttpCode.OK,
+        message: "Current user data",
+        data: { user },
+      });
+    }
+  }catch(e) {
+    next(e);
+  }
+};
 
-module.exports={registration,login,logout}
+module.exports={registration,login,logout,current}
