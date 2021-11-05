@@ -5,7 +5,7 @@ const loginLimit = require('../../helpers/rate-limit-login');
 const wrapError = require('../../helpers/errorHandler');
 const upload = require('../../helpers/uploads');
 
-const { registration, login, logout, current, update, uploadAvatar } = require('../../controllers/users');
+const { registration, login, logout, current, update, uploadAvatar,verifyUser,repeatEmailForVerifyUser } = require('../../controllers/users');
 
 
 
@@ -18,5 +18,9 @@ router.post('/logout', guard, logout);
 router.get('/current', guard, wrapError(current));
 // Загрузка avatar
 router.patch('/avatar',guard,  upload.single('avatar'),  uploadAvatar);
+// Email
+router.get('/verify/:token', wrapError(verifyUser));
 
+// В body отправляем email по которому повторно верифицируем
+router.post('/verify', wrapError(repeatEmailForVerifyUser));
 module.exports = router;
