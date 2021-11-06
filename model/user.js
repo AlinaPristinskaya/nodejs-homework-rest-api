@@ -1,6 +1,7 @@
 const {Schema, model}=require('mongoose')
 const gravatar=require('gravatar')
 const bcrypt=require('bcryptjs')
+const crypto = require('crypto');
 const SALT_FACTOR=6
 
 const userSchema= new Schema({
@@ -30,7 +31,17 @@ const userSchema= new Schema({
               this.email,{s:'250'},true
             )
           }
-        }
+        },
+        idUserCloud: { type: String, default: null },
+        //  Email verify
+        // Изначально любой зарегестрированный пользователь не верифицирован - false
+        isVerified: { type: Boolean, default: false },
+        // но у него есть для верификации токен генерируемый по умолчанию в db.
+        verifyTokenEmail: {
+          type: String,
+          required: true,
+          default: crypto.randomUUID(),
+        },
       
   })
 userSchema.pre('save',async function(next){
